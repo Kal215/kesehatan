@@ -1,0 +1,209 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Enum untuk role
+enum Role {
+  ADMIN
+  BIDAN
+  PASIEN
+}
+
+// Enum untuk status kunjungan
+enum VisitStatus {
+  MENUNGGU
+  DITERIMA
+  SELESAI
+  DIBATALKAN
+}
+
+// Enum untuk golongan darah
+enum BloodType {
+  O_POSITIF
+  O_NEGATIF
+  A_POSITIF
+  A_NEGATIF
+  B_POSITIF
+  B_NEGATIF
+  AB_POSITIF
+  AB_NEGATIF
+}
+
+// Enum untuk status bidan
+enum MidwifeStatus {
+  AKTIF
+  NONAKTIF
+}
+
+// Enum untuk jenis notifikasi
+enum NotificationType {
+  REGISTRATION_SUCCESS
+  VISIT_STATUS_CHANGED
+  EXAMINATION_SCHEDULED
+  NEW_VISIT_CREATED
+}
+
+// Model User (untuk Admin, Bidan, dan Pasien)
+model User {
+  id            String     @id @default(cuid())
+  email         String     @unique
+  name          String
+  password      String
+  role          Role
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  deletedAt     DateTime?
+
+  // Relations
+  admin         Admin?
+  midwife       Midwife?
+  patient       Patient?
+  notifications Notification[]
+
+  @@index([email])
+  @@index([role])
+  @@map("users")
+}
+
+// Model Admin
+model Admin {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("admins")
+}
+
+// Model Bidan (Midwife)
+model Midwife {
+  id            String        @id @default(cuid())
+  userId        String        @unique
+  sipb          String        @unique
+  phoneNumber   String
+  status        MidwifeStatus @default(AKTIF)
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  visits        Visit[]
+  examinations  PregnancyExamination[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@index([sipb])
+  @@index([status])
+  @@map("midwives")
+}
+
+// Model Pasien (Patient)
+model Patient {
+  id                 String   @id @default(cuid())
+  userId             String   @unique
+  nik                String   @unique
+  medicalRecordNo    String   @unique
+  dateOfBirth        DateTime
+  address            String
+  phoneNumber        String
+  bloodType          BloodType?
+  pregnancyHistory   String?
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  visits             Visit[]
+  examinations       PregnancyExamination[]
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  deletedAt          DateTime?
+
+  @@index([nik])
+  @@index([medicalRecordNo])
+  @@index([userId])
+  @@map("patients")
+}
+
+// Model Kunjungan (Visit)
+model Visit {
+  id                String      @id @default(cuid())
+  visitNumber       String      @unique
+  patientId         String
+  bidanId           String?
+  visitDate         DateTime
+  serviceType       String
+  complaint         String?
+  diagnosis         String?
+  notes             String?
+  status            VisitStatus @default(MENUNGGU)
+  patient           Patient     @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  bidan             Midwife?    @relation(fields: [bidanId], references: [id], onDelete: SetNull)
+  examinations      PregnancyExamination[]
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  @@index([patientId])
+  @@index([bidanId])
+  @@index([visitDate])
+  @@index([status])
+  @@map("visits")
+}
+
+// Model Pemeriksaan Kehamilan (Pregnancy Examination)
+model PregnancyExamination {
+  id                String   @id @default(cuid())
+  visitId           String
+  patientId         String
+  midwifeId         String
+  maternalWeight    Float
+  bloodPressure     String
+  fundusHeight      Float?
+  pregnancyAge      Int?
+  fetalWeight       Float?
+  complaint         String?
+  notes             String?
+  visit             Visit    @relation(fields: [visitId], references: [id], onDelete: Cascade)
+  patient           Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  midwife           Midwife  @relation(fields: [midwifeId], references: [id], onDelete: Cascade)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([visitId])
+  @@index([patientId])
+  @@index([midwifeId])
+  @@map("pregnancy_examinations")
+}
+
+// Model Notifikasi (Notification)
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  type      NotificationType
+  title     String
+  message   String
+  read      Boolean          @default(false)
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  @@index([userId])
+  @@index([read])
+  @@map("notifications")
+}
+
+// Model untuk audit log (opsional)
+model AuditLog {
+  id        String   @id @default(cuid())
+  action    String
+  entity    String
+  entityId  String
+  changes   Json?
+  userId    String?
+  createdAt DateTime @default(now())
+
+  @@index([entityId])
+  @@index([userId])
+  @@map("audit_logs")
+}

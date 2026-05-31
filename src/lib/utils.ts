@@ -34,9 +34,12 @@ export function calculateAge(dateOfBirth: Date | string) {
 }
 
 export function generateMedicalRecordNo() {
-  const timestamp = Date.now();
-  const random = Math.floor(Math.random() * 10000);
-  return `RM${timestamp}${random}`.slice(0, 20);
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const random = Math.floor(1000 + Math.random() * 9000); // 4 digit angka acak (1000-9999)
+  return `RM-${year}${month}${day}-${random}`;
 }
 
 export function generateVisitNumber() {

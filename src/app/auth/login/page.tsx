@@ -58,6 +58,7 @@ export default function LoginPage() {
           </div>
           <h1 className="text-3xl font-bold text-gray-800">Klinik Bersalin</h1>
           <p className="text-gray-600 mt-2">Sistem Informasi Kesehatan</p>
+          <p className="text-gray-600 mt-2">Oleh : Fianny Ascory</p>
         </div>
 
         {/* Form Card */}
@@ -117,7 +118,7 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Demo Credentials */}
+        {/* Demo Credentials
         <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
           <p className="text-sm font-semibold text-blue-900 mb-2">Demo Akun:</p>
           <p className="text-sm text-blue-800">
@@ -129,7 +130,7 @@ export default function LoginPage() {
           <p className="text-sm text-blue-800">
             <strong>Pasien:</strong> siti.aminah@gmail.com | pasien123
           </p>
-        </div>
+        </div> */}
       </div>
     </div>
   );

@@ -210,14 +210,13 @@ export default function PatientManagementPage() {
               </p>
             </div>
             
-            <Button
-              variant="primary"
+            <button
               onClick={handleAddPatient}
-              className="bg-white text-pink-600 hover:bg-pink-50 font-bold px-6 py-4 rounded-2xl shadow-lg border-0 transition-transform active:scale-95 flex items-center gap-2 self-start md:self-auto"
+              className="bg-white hover:bg-pink-50 font-bold px-6 py-4 rounded-2xl shadow-lg border-0 transition-transform active:scale-95 flex items-center gap-2 self-start md:self-auto"
             >
-              <Plus size={20} className="stroke-[3]" />
-              Daftarkan Pasien Baru
-            </Button>
+              <Plus size={20} className="stroke-[3] text-pink-600" />
+              <span className="text-pink-600 font-bold">Daftarkan Pasien Baru</span>
+            </button>
           </div>
         </div>
 

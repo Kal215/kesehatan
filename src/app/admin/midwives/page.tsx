@@ -176,14 +176,13 @@ export default function MidwifeManagementPage() {
               </p>
             </div>
             
-            <Button
-              variant="primary"
+            <button
               onClick={handleAddMidwife}
-              className="bg-white text-pink-600 hover:bg-pink-50 font-bold px-6 py-4.5 rounded-2xl shadow-lg border-0 transition-transform active:scale-95 flex items-center gap-2 max-w-max self-start md:self-auto"
+              className="bg-white hover:bg-pink-50 font-bold px-6 py-4.5 rounded-2xl shadow-lg border-0 transition-transform active:scale-95 flex items-center gap-2 max-w-max self-start md:self-auto"
             >
-              <Plus size={20} className="stroke-[3]" />
-              Tambah Bidan Baru
-            </Button>
+              <Plus size={20} className="stroke-[3] text-pink-600" />
+              <span className="text-pink-600 font-bold">Tambah Bidan Baru</span>
+            </button>
           </div>
         </div>
 
